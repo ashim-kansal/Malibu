@@ -59,7 +59,7 @@ class ExploreProductsPage extends StatelessWidget {
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 crossAxisCount: 2,
-                childAspectRatio: 1/1.25,
+                childAspectRatio: 1/1.27,
                 children: List.generate(20, (index) {
                   return GestureDetector(
                     child: ItemCard(),

@@ -57,7 +57,7 @@ class ItemCard extends StatelessWidget {
                       Row(
                         children: [
                           Image.asset("assets/images/star.jpg"),
-                          Text('4.0'),
+                          Text('4.0',style: TextStyle(fontSize: 12, color: Colors.black, fontWeight: FontWeight.w400),),
                         ],
                       )
                     ],
