@@ -37,13 +37,8 @@ static Future<bool> removeItemInCart(CartItem value) async {
     return await sharedPreferences.setString(valueSharedPrefrences, val);
   }
 
-  static Future<bool> updateItemCountInCart(CartItem value) async {
+  static Future<bool> updateItemCountInCart(List<CartItem> items) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    List<CartItem> items = await getItemsFromCart();
-    items.forEach((element) {
-      if(element.id == value.id)
-        element = value;
-    });
     String val = CartItem.encode(items);
     return await sharedPreferences.setString(valueSharedPrefrences, val);
   }

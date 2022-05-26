@@ -201,12 +201,7 @@ class ItemCartItemState extends State<ItemCartCard>{
                           height: 20.0,
                           child: RawMaterialButton(
                             onPressed: () {
-                              if(widget.item.count>1){
-                                setState(() {
-                                  widget.item.count = widget.item.count - 1;
-                                });
                                 widget.onMinusClick();
-                              }
                             },
                             fillColor: AppColors.app_rating,
                             child: Icon(
@@ -226,9 +221,7 @@ class ItemCartItemState extends State<ItemCartCard>{
                           child: RawMaterialButton(
                             onPressed: () {
                               widget.onAddClick();
-                              setState(() {
-                                widget.item.count = widget.item.count + 1;
-                              });
+
                             },
                             fillColor: AppColors.app_rating,
                             child: Icon(

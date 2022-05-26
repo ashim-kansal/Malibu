@@ -25,6 +25,7 @@ class CartPage extends StatefulWidget {
 
 class CartPageState extends State<CartPage> {
   List<CartItem> items = [];
+  double sum = 0.0;
 
   @override
   void initState() {
@@ -34,13 +35,13 @@ class CartPageState extends State<CartPage> {
 
   @override
   Widget build(BuildContext context) {
-
-    double sum = 0.0;
     if(items.length > 0) {
+      sum = 0;
       items.forEach((element) =>
       sum = sum + (element.count * (element.price / 100))
       );
     }
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -112,29 +113,7 @@ class CartPageState extends State<CartPage> {
                                 color: Colors.black,
                                 height: 15,
                               )),
-                          // Expanded(
-                          //   child:,
-                          // ),
-                          // Container(
-                          //   height: 16,
-                          //   width: 16,
-                          //   decoration: new BoxDecoration(
-                          //     shape: BoxShape.circle,
-                          //     border: Border.all(width: 1, color: Colors.black),
-                          //   ),
-                          //   child: Container(),
-                          // ),
-                          // Container(
-                          //   margin: const EdgeInsets.only(left: 5.0, right: 5.0),
-                          //   child: Text('Address', style: TextStyle(color: Colors.black, fontSize: 12),),),
-                          // Expanded(
-                          //   child:Container(
-                          //       margin: const EdgeInsets.only(left: 0.0, right: 5.0),
-                          //       child: Divider(
-                          //         color: Colors.black,
-                          //         height: 15,
-                          //
-                          //       )),),
+
                           Container(
                             height: 24,
                             width: 16,
@@ -169,10 +148,22 @@ class CartPageState extends State<CartPage> {
                           return ItemCartCard(
                             item: items[index],
                             onAddClick: () {
-                              items[index].count++;
+                              setState(() {
+                                items[index].count = items[index].count+1;
+                              });
+                              Helper.updateItemCountInCart(items);
                             },
                             onMinusClick: () {
-                              items[index].count--;
+                              if(items[index].count==1){
+                                setState(() {
+                                  items.removeAt(index);
+                                });
+                                Helper.updateItemCountInCart(items);
+                              }else {
+                                setState(() {
+                                  items[index].count = items[index].count - 1;
+                                });
+                                Helper.updateItemCountInCart(items);                              }
                             },
                           );
                         },
