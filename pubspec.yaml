@@ -20,7 +20,9 @@ dependencies:
   get_it: ^7.2.0
   http: ^0.13.3
   rxdart: ^0.27.3
-
+  cached_network_image: ^3.2.0
+  fluttertoast: ^8.0.9
+  shared_preferences: ^2.0.15
 
 dev_dependencies:
   bloc_test: ^9.0.2
@@ -42,6 +44,11 @@ flutter:
     - assets/images/minus_icon.png
     - assets/images/ic_cart.png
     - assets/images/tick.png
+    - assets/images/slide1.png
+    - assets/images/slide2.png
+    - assets/images/slide3.png
+    - assets/images/slide4.png
+    - assets/images/ic_logo.png
 
   fonts:
     - family: AvenirLTStd

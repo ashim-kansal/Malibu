@@ -1,4 +1,10 @@
+
+import 'package:Malibu/api/Cartitem.dart';
+import 'package:Malibu/api/ItemOptionValues.dart';
+import 'package:Malibu/api/ProductListJson.dart';
+import 'package:Malibu/api/itemOptionData.dart';
 import 'package:Malibu/components/AppColors.dart';
+import 'package:Malibu/components/OrderSuccessDialog.dart';
 import 'package:Malibu/presentation/pages/cart_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +16,9 @@ enum Syrups { Caramel, Vanilla, Berry }
 
 class SelectOptionDialog extends StatefulWidget {
   static const String RouteName = '/options';
+  SelectOptionDialogArguments data;
+  SelectOptionDialog({required this.data});
+
 
   @override
   State<StatefulWidget> createState() {
@@ -18,9 +27,16 @@ class SelectOptionDialog extends StatefulWidget {
 }
 
 class _SelectOptionDialog extends State<SelectOptionDialog> {
-  MilkOptions _milkOptions = MilkOptions.Whole;
-  Sweetener _sweetener = Sweetener.Raw;
-  Syrups _syrups = Syrups.Caramel;
+
+  List<String> selectedIds = [];
+
+  @override
+  void initState() {
+    super.initState();
+    widget.data.options.forEach((element) {
+      selectedIds.add(element.itemOptionData.values[0].id);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,183 +58,47 @@ class _SelectOptionDialog extends State<SelectOptionDialog> {
           Expanded(child: Padding(
             padding: EdgeInsets.all(15),
             child:   ListView(
-              children: [
-                Text(
-                  'Milk Options',
-                  style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w800),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                ListTile(
-                  title: const Text('Whole Dairy Milk', style: TextStyle(color: Colors.black)),
-                  leading: Radio(
-                    fillColor:
-                    MaterialStateProperty.all<Color>(AppColors.app_blue),
-                    value: MilkOptions.Whole,
-                    groupValue: _milkOptions,
-                    onChanged: (MilkOptions? value) {
-                      setState(() {
-                        this._milkOptions = value!;
-                      });
-                    },
-                  ),
-                ),
-                ListTile(
-                  title: const Text('Reduced Fat Dairy Milk', style: TextStyle(color: Colors.black)),
-                  leading: Radio(
-                    fillColor:
-                    MaterialStateProperty.all<Color>(AppColors.app_blue),
-                    value: MilkOptions.Reduce_fat,
-                    groupValue: _milkOptions,
-                    onChanged: (MilkOptions? value) {
-                      setState(() {
-                        this._milkOptions = value!;
-                      });
-                    },
-                  ),
-                ),
-                ListTile(
-                  title: const Text('Dairy Cream', style: TextStyle(color: Colors.black)),
-                  leading: Radio(
-                    fillColor:
-                    MaterialStateProperty.all<Color>(AppColors.app_blue),
-                    value: MilkOptions.Cream,
-                    groupValue: _milkOptions,
-                    onChanged: (MilkOptions? value) {
-                      setState(() {
-                        this._milkOptions = value!;
-                      });
-                    },
-                  ),
-                ),
-                ListTile(
-                  title: const Text('Almond Milk', style: TextStyle(color: Colors.black)),
-                  leading: Radio(
-                    fillColor:
-                    MaterialStateProperty.all<Color>(AppColors.app_blue),
-                    value: MilkOptions.Almond,
-                    groupValue: _milkOptions,
-                    onChanged: (MilkOptions? value) {
-                      setState(() {
-                        this._milkOptions = value!;
-                      });
-                    },
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  'Sweeteners',
-                  style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w800),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                ListTile(
-                  title: const Text('Raw Sugar', style: TextStyle(color: Colors.black)),
-                  leading: Radio(
-                    fillColor:
-                    MaterialStateProperty.all<Color>(AppColors.app_blue),
-                    value: Sweetener.Raw,
-                    groupValue: _sweetener,
-                    onChanged: (Sweetener? value) {
-                      setState(() {
-                        this._sweetener = value!;
-                      });
-                    },
-                  ),
-                ),
-                ListTile(
-                  title: const Text('Refined Sugar', style: TextStyle(color: Colors.black)),
-                  leading: Radio(
-                    fillColor:
-                    MaterialStateProperty.all<Color>(AppColors.app_blue),
-                    value: Sweetener.Refined,
-                    groupValue: _sweetener,
-                    onChanged: (Sweetener? value) {
-                      setState(() {
-                        this._sweetener = value!;
-                      });
-                    },
-                  ),
-                ),
-                ListTile(
-                  title: const Text('Agave', style: TextStyle(color: Colors.black)),
-                  leading: Radio(
-                    fillColor:
-                    MaterialStateProperty.all<Color>(AppColors.app_blue),
-                    value: Sweetener.Agave,
-                    groupValue: _sweetener,
-                    onChanged: (Sweetener? value) {
-                      setState(() {
-                        this._sweetener = value!;
-                      });
-                    },
-                  ),
-                ),
-                Text(
-                  'Gourmet Syrups',
-                  style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w800),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                ListTile(
-                  title: const Text('Caramel', style: TextStyle(color: Colors.black)),
-                  leading: Radio(
-                    fillColor:
-                    MaterialStateProperty.all<Color>(AppColors.app_blue),
-                    value: Syrups.Caramel,
-                    groupValue: _syrups,
-                    onChanged: (Syrups? value) {
-                      setState(() {
-                        this._syrups = value!;
-                      });
-                    },
-                  ),
-                ),
-                ListTile(
-                  title: const Text('Vanilla', style: TextStyle(color: Colors.black)),
-                  leading: Radio(
-                    fillColor:
-                    MaterialStateProperty.all<Color>(AppColors.app_blue),
-                    value: Syrups.Vanilla,
-                    groupValue: _syrups,
-                    onChanged: (Syrups? value) {
-                      setState(() {
-                        this._syrups = value!;
-                      });
-                    },
-                  ),
-                ),
-                ListTile(
-                  title: const Text('Berry', style: TextStyle(color: Colors.black),),
-                  leading: Radio(
-                    fillColor:
-                    MaterialStateProperty.all<Color>(AppColors.app_blue),
-                    value: Syrups.Berry,
-                    groupValue: _syrups,
-                    onChanged: (Syrups? value) {
-                      setState(() {
-                        this._syrups = value!;
-                      });
-                    },
-                  ),
-                ),
-              ],
+              children: List.generate(widget.data.options.length, (index){
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.data.options[index].itemOptionData.name,
+                      style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w800),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    ListView(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      children: List.generate(widget.data.options[index].itemOptionData.values.length, (index1) {
+                        return  ListTile(
+                          title: Text(widget.data.options[index].itemOptionData.values[index1].itemOptionValueData.name, style: TextStyle(color: Colors.black),),
+                          leading: Radio(
+                            fillColor:
+                            MaterialStateProperty.all<Color>(AppColors.app_blue),
+                            value: widget.data.options[index].itemOptionData.values[index1].id,
+                            groupValue: this.selectedIds[index],
+                            onChanged: (String? value) {
+                              setState(() {
+                                this.selectedIds[index] = value!;
+                              });
+                            },
+                          ),
+                        );
+                        }
+                      ),
+                    )
+                  ],
+                );
+              }
+              ,
             )
-          ),),
+          ),),),
           Align(
             alignment: AlignmentDirectional.bottomCenter,
             child: Padding(
@@ -244,7 +124,33 @@ class _SelectOptionDialog extends State<SelectOptionDialog> {
 
                           ))),
                   onPressed: () {
-                    Navigator.pushNamed(context, CartPage.RouteName);
+                    this.selectedIds.removeWhere((element) => element=="");
+                    print(""+this.selectedIds.toString());
+                    widget.data.product.itemData.variations.forEach((element) {
+                        if(compareArrays(element.itemVariationData.itemOptionValues, this.selectedIds)){
+                          print("variation name: "+element.itemVariationData.name);
+                          print(" amount: "+element.itemVariationData.priceMoney.amount.toString());
+                          print(" name: "+widget.data.product.itemData.name);
+                          print(" image: "+widget.data.product.itemData.imageIds[0]);
+                          CartItem item = CartItem(count: widget.data.count,
+                              id: element.id,
+                              name: widget.data.product.itemData.name,
+                              thumbnail: widget.data.product.itemData.thumbnail,
+                              price: element.itemVariationData.priceMoney.amount);
+                          Navigator.pop(context);
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext dialogContext) {
+                              return  Dialog(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(20.0)),
+                                child: CustomProductSelectedDialog(element: item,name:element.itemVariationData.name),);
+                            },
+                          );
+                        }
+                      });
+                    // Navigator.pushNamed(context, CartPage.RouteName);
                   }),
             ),
           )
@@ -252,4 +158,22 @@ class _SelectOptionDialog extends State<SelectOptionDialog> {
       ),
     );
   }
+
+  bool compareArrays(List<ItemOptionValues> array1, List<String> array2) {
+
+    if (array1.length == array2.length) {
+      return array1.every( (value) => array2.contains(value.itemOptionValueId) );
+    } else {
+      return false;
+    }
+  }
+
+}
+
+class SelectOptionDialogArguments{
+  final List<Objects> options;
+  final Objects product;
+  final int count;
+
+  SelectOptionDialogArguments(this.product, this.options,this.count);
 }

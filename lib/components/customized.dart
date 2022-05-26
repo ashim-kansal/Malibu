@@ -1,40 +1,48 @@
+import 'package:Malibu/api/ProductAPIServices.dart';
 import 'package:Malibu/components/AppColors.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:Malibu/components/AppColors.dart';
-import 'package:Malibu/components/ProductDetailPageWidgets.dart';
 
 class CustomizedPageView extends StatefulWidget {
-  CustomizedPageView({Key? key}) : super(key: key);
+
+  List<String> imageIds=[];
+  CustomizedPageView(this.imageIds, {Key? key}) : super(key: key);
 
   @override
   _CustomizedPageViewState createState() => _CustomizedPageViewState();
 }
 
 class _CustomizedPageViewState extends State<CustomizedPageView> {
-  String bal = '0';
   int currentPage = 0;
+  List<String> images=[];
+
+  @override
+  void initState() {
+    super.initState();
+    getProducts(widget.imageIds);
+  }
   @override
   Widget build(BuildContext context) {
-    final panels = Container(
-        height: 200,
-        child:  PageView.builder(
-        onPageChanged: (int page) {
-          setState(() {
-            currentPage = page;
-          });
-        },
-        controller: PageController(initialPage: 0),
 
-
-        // itemCount: 3,
-        itemBuilder: (context, index) {
-          return ProductImagePagerItem();
-        })
-    );
-
-    return  Container(
+      if(images.length>0)
+        return Container(
       child: Column(children: <Widget>[
-        panels,
+        Container(
+            height: 200,
+            child:  PageView.builder(
+              itemCount: images.length,
+                onPageChanged: (int page) {
+                  setState(() {
+                    currentPage = page;
+                  });
+                },
+                controller: PageController(initialPage: 0),
+                // itemCount: 3,
+                itemBuilder: (context, index) {
+                  return ProductImagePagerItem(imageUrl: images[index]);
+                })
+        ),
         // Stack(
         //   children: <Widget>[
         Container(
@@ -43,7 +51,7 @@ class _CustomizedPageViewState extends State<CustomizedPageView> {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              for (int i = 0; i < 5; i++)
+              for (int i = 0; i < images.length; i++)
                 (i == currentPage ? circleBar(true) : circleBar(false))
             ],
           ),
@@ -52,6 +60,22 @@ class _CustomizedPageViewState extends State<CustomizedPageView> {
         // ),
       ]),
     );
+    else
+        return   Container(
+        child: Center(child: CircularProgressIndicator(),)
+        );
+  }
+
+  void getProducts(List<String> ids) {
+    print("eeee"+ids.toString());
+    getImages(ids).then((value) => {
+      if (value != null)
+        {
+          setState(() {
+            this.images = value;
+          })
+        }
+    });
   }
 
   Widget circleBar(bool isActive) {
@@ -68,6 +92,9 @@ class _CustomizedPageViewState extends State<CustomizedPageView> {
 }
 
 class ProductImagePagerItem extends StatelessWidget {
+  String imageUrl = "";
+  ProductImagePagerItem({required this.imageUrl});
+
   @override
   Widget build(BuildContext context) {
     return Padding(padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -77,9 +104,11 @@ class ProductImagePagerItem extends StatelessWidget {
             color: AppColors.app_pink,
             image: DecorationImage(
                 fit: BoxFit.fill,
-                image: AssetImage('assets/images/home_card.png'))),
+                image: CachedNetworkImageProvider(this.imageUrl))),
         child: Container(),
       ),);
   }
+
+
 }
 

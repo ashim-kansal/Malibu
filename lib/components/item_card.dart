@@ -1,9 +1,18 @@
+import 'package:Malibu/api/Cartitem.dart';
+import 'package:Malibu/api/ProductAPIServices.dart';
+import 'package:Malibu/api/ProductListJson.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:Malibu/components/AppColors.dart';
 
 class ItemCard extends StatelessWidget {
+
+  Objects object;
+
+  ItemCard({required this.object});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -15,6 +24,7 @@ class ItemCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
 
           children: [
+            this.object.itemData.thumbnail.isNotEmpty  ?
             Padding(
                 padding: EdgeInsets.all(5),
                 child: AspectRatio(
@@ -24,19 +34,59 @@ class ItemCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       image: DecorationImage(
                         fit: BoxFit.cover,
-                        image: AssetImage('assets/images/mg_latte.jpg'),
+                        // image: AssetImage('assets/images/mg_latte.jpg'),
+                        image: CachedNetworkImageProvider(this.object.itemData.thumbnail),
                       ),
                       borderRadius: const BorderRadius.all(Radius.circular(16)),
                     ),
                   ),
-                )),
+                ))
+            : FutureBuilder<String>(
+                future: getImage(this.object.itemData.imageIds[0]),
+                builder: (context, snapshot) {
+                  print(snapshot.data);
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    // if (snapshot.hasError) {
+                    //   return Center(child: Text(AppLocalizations.of(context).error),);
+                    // }
+
+                      this.object.itemData.thumbnail = snapshot.data!;
+                      return Padding(
+                          padding: EdgeInsets.all(5),
+                          child: AspectRatio(
+                            aspectRatio: 3.0 / 2.8,
+                            child: DecoratedBox(
+                              // use a custom DecoratedBox to clip the image on the topLeft & topRight corners
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: setImage(snapshot.data!),
+                                ),
+                                borderRadius: const BorderRadius.all(Radius.circular(16)),
+                              ),
+                            ),
+                          ));
+
+
+                    // setState(() {
+                    //   widget.therapists = snapshot.data.result;
+                    // });
+
+                  }
+                  else
+                    return Container(
+                      child: Center(child: CircularProgressIndicator(),),
+                    );
+                }),
+
             Padding(
               padding: EdgeInsets.fromLTRB(10, 0, 10, 9),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Malibu Campfire Coffee Mug ggg ggg',
+                    object.itemData.name,
                     maxLines: 2,
                     textAlign: TextAlign.start,
                     style: TextStyle(color: Colors.black, fontSize: 12),
@@ -48,7 +98,7 @@ class ItemCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        '\$20',
+                        '\$'+(object.itemData.variations[0].itemVariationData.priceMoney.amount/100).toString(),
                         style: TextStyle(
                             color: Colors.black,
                             fontSize: 14,
@@ -70,10 +120,31 @@ class ItemCard extends StatelessWidget {
       ),
     );
   }
+
+  setImage(String s) {
+    if(s != null) {
+      return CachedNetworkImageProvider(s);
+    } else{
+      return  AssetImage("assets/images/mg_latte.jpg");
+    }
+  }
 }
 
 
-class ItemCartCard extends StatelessWidget {
+class ItemCartCard extends StatefulWidget {
+  final CartItem item;
+  final VoidCallback onAddClick;
+  final VoidCallback onMinusClick;
+
+  ItemCartCard({required this.item,required this.onAddClick,required this.onMinusClick});
+
+  @override
+  State<StatefulWidget> createState() {
+    return ItemCartItemState();
+  }
+}
+class ItemCartItemState extends State<ItemCartCard>{
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -86,15 +157,15 @@ class ItemCartCard extends StatelessWidget {
             Padding(
                 padding: EdgeInsets.all(10),
                 child: SizedBox(
-                  height: 85,
-                  width: 80,
+                  height: 100,
+                  width: 95,
                   child: DecoratedBox(
                     // use a custom DecoratedBox to clip the image on the topLeft & topRight corners
                     decoration: BoxDecoration(
 
                       image: DecorationImage(
                         fit: BoxFit.fill,
-                        image: AssetImage('assets/images/mg_latte.jpg',),
+                        image: CachedNetworkImageProvider(widget.item.thumbnail),
                       ),
                       borderRadius: const BorderRadius.all(Radius.circular(5)),
                     ),
@@ -110,13 +181,13 @@ class ItemCartCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Text(
-                      'Malibu Campfire Coffee Mug',
+                      widget.item.name,
                       maxLines: 2,
                       textAlign: TextAlign.start,
                       style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.values[4]),
                     ),
                     Text(
-                      '\$20',
+                      '\$'+((widget.item.price/100)*widget.item.count).toString(),
                       textAlign: TextAlign.start,
                       style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.values[5]),
                     ),
@@ -129,7 +200,14 @@ class ItemCartCard extends StatelessWidget {
                           width: 20.0,
                           height: 20.0,
                           child: RawMaterialButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              if(widget.item.count>1){
+                                setState(() {
+                                  widget.item.count = widget.item.count - 1;
+                                });
+                                widget.onMinusClick();
+                              }
+                            },
                             fillColor: AppColors.app_rating,
                             child: Icon(
                               Icons.remove,
@@ -140,13 +218,18 @@ class ItemCartCard extends StatelessWidget {
 
                         ),
                         SizedBox(width: 10,),
-                        Text('12', style: TextStyle(color: AppColors.app_rating, fontSize: 14, fontWeight: FontWeight.values[4]),),
+                        Text(widget.item.count.toString(), style: TextStyle(color: AppColors.app_rating, fontSize: 14, fontWeight: FontWeight.values[4]),),
                         SizedBox(width: 10,),
                         SizedBox(
                           width: 20.0,
                           height: 20.0,
                           child: RawMaterialButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              widget.onAddClick();
+                              setState(() {
+                                widget.item.count = widget.item.count + 1;
+                              });
+                            },
                             fillColor: AppColors.app_rating,
                             child: Icon(
                               Icons.add,
@@ -233,6 +316,7 @@ class ItemExploreCard extends StatelessWidget {
       ),
     );
   }
+
 }
 
 

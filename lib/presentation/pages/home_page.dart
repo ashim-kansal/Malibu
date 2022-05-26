@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:Malibu/api/ProductAPIServices.dart';
+import 'package:Malibu/api/ProductListJson.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Malibu/components/AppColors.dart';
@@ -10,36 +12,62 @@ import 'package:Malibu/presentation/pages/cart_page.dart';
 import 'package:Malibu/presentation/pages/explore_products_page.dart';
 import 'package:Malibu/presentation/pages/product_detail_page.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   static const String RouteName = '/home';
 
   const HomePage({Key? key}) : super(key: key);
 
   @override
+  State<StatefulWidget> createState() {
+    return _HomePageState();
+  }
+}
+
+class _HomePageState extends State<HomePage> {
+  List<Objects> dataList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    getProducts();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    List<Objects> data = [];
+    data.addAll(dataList);
+
+    data.retainWhere((obj) {
+      return obj.type == "CATEGORY";
+    });
     return Scaffold(
       backgroundColor: AppColors.home_bg,
       appBar: AppBar(
         backgroundColor: AppColors.app_black,
         elevation: 0,
+        centerTitle: true,
         title: Padding(
           padding: EdgeInsets.all(10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                height: 48,
-                width: 48,
-                child: Image.asset('assets/images/appicon_48.jpg'),
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              Image.asset('assets/images/home_name.jpg'),
-            ],
-          ),
+          child:   Image.asset('assets/images/ic_logo.png'),
         ),
+        actions: [
+          Padding(padding: EdgeInsets.all(10),
+          child: GestureDetector(
+            onTap: (){
+              Navigator.pushNamed(context, CartPage.RouteName);
+            },
+            child: Container(
+              width: 30,
+              child: Icon(
+                Icons.shopping_cart_outlined,
+                size: 24,
+                color: AppColors.color_9fabc0,
+              ),
+            ),
+          ),),
+        ],
       ),
+
       body: Column(
         mainAxisSize: MainAxisSize.max,
         children: [
@@ -52,7 +80,7 @@ class HomePage extends StatelessWidget {
                 child: ListView(
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
-                    children: List.generate(20, (index) {
+                    children: List.generate(data.length, (index) {
                       return Column(
                         children: [
                           SizedBox(
@@ -62,24 +90,34 @@ class HomePage extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'Hot Espresso Drinks',
+                                data[index].categoryData.name,
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontWeight: FontWeight.w800,
                                     fontSize: 16),
                               ),
                               GestureDetector(
-                                onTap:(){
-                                  Navigator.pushNamed(context, ExploreProductsPage.RouteName);
+                                onTap: () {
+                                  List<Objects> options = [];
+                                  options.addAll(dataList);
+
+                                  options.retainWhere((obj) {
+                                    return obj.type == "ITEM_OPTION";
+                                  });
+                                  var args = ExplorePageArguments(
+                                      data[index], options);
+                                  Navigator.pushNamed(
+                                      context, ExploreProductsPage.RouteName,
+                                      arguments: args);
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
                                       border: Border.all(
-                                        color:AppColors.app_blue,
+                                        color: AppColors.app_blue,
                                       ),
-                                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                                      color: AppColors.app_blue
-                                  ),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(10)),
+                                      color: AppColors.app_blue),
                                   child: Padding(
                                     padding: EdgeInsets.fromLTRB(8, 3, 8, 3),
                                     child: Text(
@@ -102,26 +140,82 @@ class HomePage extends StatelessWidget {
                               Flexible(
                                   flex: 1,
                                   fit: FlexFit.tight,
-                                  child: GestureDetector(
-                                    child: ItemCard(),
-                                    onTap: () {
-                                      Navigator.pushNamed(
-                                          context, ProductDetailPage.RouteName);
-                                    },
-                                  )),
+                                  child: data[index].objects.length > 0
+                                      ? GestureDetector(
+                                          child: ItemCard(
+                                              object: data[index].objects[0]),
+                                          onTap: () {
+                                            var product =
+                                                data[index].objects[0];
+                                            var arg;
+                                            if (product.itemData.item_options
+                                                .isNotEmpty) {
+                                              List<Objects> options = [];
+                                              List<String> opt = product
+                                                  .itemData.item_options
+                                                  .map((e) => e.itemOptionId)
+                                                  .toList();
+                                              options.addAll(dataList);
+
+                                              options.retainWhere((obj) {
+                                                return obj.type ==
+                                                        "ITEM_OPTION" &&
+                                                    opt.contains(obj.id);
+                                              });
+
+                                              arg = ProductDetailArguments(
+                                                  product, options);
+                                            } else {
+                                              arg = ProductDetailArguments(
+                                                  product, []);
+                                            }
+                                            Navigator.pushNamed(context,
+                                                ProductDetailPage.RouteName,
+                                                arguments: arg);
+                                          },
+                                        )
+                                      : Container()),
                               SizedBox(
                                 width: 10,
                               ),
                               Flexible(
                                   flex: 1,
                                   fit: FlexFit.tight,
-                                  child: GestureDetector(
-                                    child: ItemCard(),
-                                    onTap: () {
-                                      Navigator.pushNamed(
-                                          context, ProductDetailPage.RouteName);
-                                    },
-                                  )),
+                                  child: data[index].objects.length > 1
+                                      ? GestureDetector(
+                                          child: ItemCard(
+                                              object: data[index].objects[1]),
+                                          onTap: () {
+                                            var product =
+                                                data[index].objects[0];
+                                            var arg;
+                                            if (product.itemData.item_options
+                                                .isNotEmpty) {
+                                              List<Objects> options = [];
+                                              List<String> opt = product
+                                                  .itemData.item_options
+                                                  .map((e) => e.itemOptionId)
+                                                  .toList();
+                                              options.addAll(dataList);
+
+                                              options.retainWhere((obj) {
+                                                return obj.type ==
+                                                        "ITEM_OPTION" &&
+                                                    opt.contains(obj.id);
+                                              });
+
+                                              arg = ProductDetailArguments(
+                                                  product, options);
+                                            } else {
+                                              arg = ProductDetailArguments(
+                                                  product, []);
+                                            }
+                                            Navigator.pushNamed(context,
+                                                ProductDetailPage.RouteName,
+                                                arguments: arg);
+                                          },
+                                        )
+                                      : Container()),
                             ],
                           )
                         ],
@@ -238,5 +332,18 @@ class HomePage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void getProducts() {
+    ProductAPIServices productAPIServices = new ProductAPIServices();
+
+    productAPIServices.getProducts().then((value) => {
+          if (value != null)
+            {
+              setState(() {
+                this.dataList = value;
+              })
+            }
+        });
   }
 }

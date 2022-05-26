@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:Malibu/api/ProductListJson.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Malibu/components/AppColors.dart';
@@ -8,18 +9,33 @@ import 'package:Malibu/components/item_card.dart';
 import 'package:Malibu/presentation/pages/cart_page.dart';
 import 'package:Malibu/presentation/pages/product_detail_page.dart';
 
-class ExploreProductsPage extends StatelessWidget {
+class ExploreProductsPage extends StatefulWidget {
   static const String RouteName = '/explore_products';
 
-  const ExploreProductsPage({Key? key}) : super(key: key);
 
+  ExplorePageArguments data;
+
+  ExploreProductsPage({required this.data});
+
+  @override
+  State<StatefulWidget> createState() {
+    return ExploreProductsPageState();
+  }
+}
+
+class ExploreProductsPageState extends State<ExploreProductsPage> {
+
+  @override
+  void initState() {
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0,
-        title: Text("Hot Espresso Drinks", style: TextStyle(color: Colors.black),),
+        title: Text(widget.data.product.categoryData.name, style: TextStyle(color: Colors.black),),
         backgroundColor: Colors.white,
         iconTheme: IconThemeData(
             size: 30.0,
@@ -60,11 +76,26 @@ class ExploreProductsPage extends StatelessWidget {
                 shrinkWrap: true,
                 crossAxisCount: 2,
                 childAspectRatio: 1/1.27,
-                children: List.generate(20, (index) {
+                children: List.generate(widget.data.product.objects.length, (index) {
                   return GestureDetector(
-                    child: ItemCard(),
+                    child: ItemCard(object: widget.data.product.objects[index]),
                     onTap: (){
-                      Navigator.pushNamed(context, ProductDetailPage.RouteName);
+                      var product = widget.data.product.objects[index];
+                      var arg;
+                      if(product.itemData.item_options.isNotEmpty){
+                        List<Objects> option = [];
+                        List<String> opt = product.itemData.item_options.map((e) => e.itemOptionId).toList();
+                        option.addAll(widget.data.options);
+
+                        option.retainWhere((obj){
+                          return opt.contains(obj.id);
+                        });
+
+                        arg = ProductDetailArguments(product, option);
+                      }else{
+                        arg = ProductDetailArguments(product, []);
+                      }
+                      Navigator.pushNamed(context, ProductDetailPage.RouteName, arguments: arg);
                     },
                   );
                 })),
@@ -73,4 +104,11 @@ class ExploreProductsPage extends StatelessWidget {
       ),
     );
   }
+}
+
+class ExplorePageArguments{
+  final List<Objects> options;
+  final Objects product;
+
+  ExplorePageArguments(this.product, this.options);
 }

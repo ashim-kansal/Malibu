@@ -6,9 +6,10 @@ import 'package:flutter/widgets.dart';
 
 class CartInvoiceText extends StatelessWidget{
 
-  CartInvoiceText(){
+  final String name;
+  final String amount;
+  CartInvoiceText(this.name, this.amount);
 
-  }
   @override
   Widget build(BuildContext context) {
     return Padding(padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
@@ -16,8 +17,8 @@ class CartInvoiceText extends StatelessWidget{
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text('Subtotal',style: TextStyle(color: Colors.black, fontSize: 14),),
-        Text('\$ 35.60',style: TextStyle(color: Colors.black, fontSize: 14),),
+        Text(name,style: TextStyle(color: Colors.black, fontSize: 14),),
+        Text('\$ '+amount,style: TextStyle(color: Colors.black, fontSize: 14),),
       ],
     ),);
   }

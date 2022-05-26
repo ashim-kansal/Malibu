@@ -1,4 +1,5 @@
 
+import 'package:Malibu/api/ProductListJson.dart';
 import 'package:Malibu/components/OptionDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:Malibu/components/UndefinedView.dart';
@@ -17,11 +18,14 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case CartPage.RouteName:
       return MaterialPageRoute(builder: (context) => CartPage());
     case ExploreProductsPage.RouteName:
-      return MaterialPageRoute(builder: (context) => ExploreProductsPage());
+      final ExplorePageArguments args =  settings.arguments as ExplorePageArguments;
+      return MaterialPageRoute(builder: (context) => ExploreProductsPage(data: args));
     case ProductDetailPage.RouteName:
-      return MaterialPageRoute(builder: (context) => ProductDetailPage());
+      final ProductDetailArguments args =  settings.arguments as ProductDetailArguments;
+      return MaterialPageRoute(builder: (context) => ProductDetailPage(data: args));
     case SelectOptionDialog.RouteName:
-      return MaterialPageRoute(builder: (context) => SelectOptionDialog());
+      final SelectOptionDialogArguments args =  settings.arguments as SelectOptionDialogArguments;
+      return MaterialPageRoute(builder: (context) => SelectOptionDialog(data: args));
       default:
       return MaterialPageRoute(builder: (context) => UndefinedView(name: "settings.name"));
   }
