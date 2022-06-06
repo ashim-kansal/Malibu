@@ -15,7 +15,7 @@ class OrderSuccessDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: 200,
+      height: 220,
       color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -47,32 +47,27 @@ class OrderSuccessDialog extends StatelessWidget {
                 color: AppColors.color_727272,
                 fontWeight: FontWeight.w400),
           ),
-
-          // ElevatedButton(
-          //     child: Text(" Add To Cart",
-          //         style: TextStyle(fontSize: 18)),
-          //     style: ButtonStyle(
-          //         minimumSize: MaterialStateProperty.all<Size>(
-          //             Size.fromHeight(50)),
-          //         foregroundColor: MaterialStateProperty.all<Color>(
-          //             AppColors.app_blue),
-          //         backgroundColor: MaterialStateProperty.all<Color>(
-          //             Colors.white),
-          //         shape: MaterialStateProperty.all<
-          //             RoundedRectangleBorder>(
-          //             RoundedRectangleBorder(
-          //               borderRadius:
-          //               BorderRadius.all(Radius.circular(10)),
-          //             ))),
-          //     onPressed: () {
-          //       showDialog(
-          //         context: context,
-          //         builder: (BuildContext dialogContext) {
-          //           return MyAlertDialog(title: 'Title ', content: 'Dialog content');
-          //         },
-          //       );
-          //       // Navigator.pushNamed(context, CartPage.RouteName);
-          //     })
+          
+          ElevatedButton(
+              child: Text("Ok",
+                  style: TextStyle(fontSize: 18)),
+              style: ButtonStyle(
+                  minimumSize: MaterialStateProperty.all<Size>(
+                      Size.fromHeight(50)),
+                  foregroundColor: MaterialStateProperty.all<Color>(
+                      AppColors.app_blue),
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                      Colors.white),
+                  shape: MaterialStateProperty.all<
+                      RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius:
+                        BorderRadius.all(Radius.circular(10)),
+                      ))),
+              onPressed: () {
+               Navigator.pop(context);
+                // Navigator.pushNamed(context, CartPage.RouteName);
+              })
         ],
       ),
     );

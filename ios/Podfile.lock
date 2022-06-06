@@ -1,3 +1,67 @@
-PODFILE CHECKSUM: 588fe9cf92fcee0ad24e02e25fc432f9bb48c358
+PODS:
+  - Flutter (1.0.0)
+  - fluttertoast (0.0.2):
+    - Flutter
+    - Toast
+  - FMDB (2.7.5):
+    - FMDB/standard (= 2.7.5)
+  - FMDB/standard (2.7.5)
+  - path_provider_ios (0.0.1):
+    - Flutter
+  - shared_preferences_ios (0.0.1):
+    - Flutter
+  - sqflite (0.0.2):
+    - Flutter
+    - FMDB (>= 2.7.5)
+  - square_in_app_payments (1.5.6):
+    - Flutter
+    - SquareBuyerVerificationSDK (= 1.5.6)
+    - SquareInAppPaymentsSDK (= 1.5.6)
+  - SquareBuyerVerificationSDK (1.5.6)
+  - SquareInAppPaymentsSDK (1.5.6)
+  - Toast (4.0.0)
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
+  - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
+  - shared_preferences_ios (from `.symlinks/plugins/shared_preferences_ios/ios`)
+  - sqflite (from `.symlinks/plugins/sqflite/ios`)
+  - square_in_app_payments (from `.symlinks/plugins/square_in_app_payments/ios`)
+
+SPEC REPOS:
+  trunk:
+    - FMDB
+    - SquareBuyerVerificationSDK
+    - SquareInAppPaymentsSDK
+    - Toast
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  fluttertoast:
+    :path: ".symlinks/plugins/fluttertoast/ios"
+  path_provider_ios:
+    :path: ".symlinks/plugins/path_provider_ios/ios"
+  shared_preferences_ios:
+    :path: ".symlinks/plugins/shared_preferences_ios/ios"
+  sqflite:
+    :path: ".symlinks/plugins/sqflite/ios"
+  square_in_app_payments:
+    :path: ".symlinks/plugins/square_in_app_payments/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
+  fluttertoast: 16fbe6039d06a763f3533670197d01fc73459037
+  FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
+  path_provider_ios: 7d7ce634493af4477d156294792024ec3485acd5
+  shared_preferences_ios: aef470a42dc4675a1cdd50e3158b42e3d1232b32
+  sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
+  square_in_app_payments: f8ba2aacc976a2be36da8a5b3a0b4b4b88ebb918
+  SquareBuyerVerificationSDK: d1253b4ed9a1226dc8d4b5bc800cd47886768078
+  SquareInAppPaymentsSDK: 99476a38e643d4f2ebf86c0c2167752553683481
+  Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
+
+PODFILE CHECKSUM: 7f53eb9190e7988ffb30ca0c8f0cb2382caf13fe
 
 COCOAPODS: 1.11.3

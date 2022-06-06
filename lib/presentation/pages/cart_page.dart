@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:Malibu/api/Cartitem.dart';
 import 'package:Malibu/components/OrderSuccessDialog.dart';
+import 'package:Malibu/config.dart';
 import 'package:Malibu/services/Helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +14,12 @@ import 'package:Malibu/components/cart_textview_widget.dart';
 import 'package:Malibu/components/customlist.dart';
 import 'package:Malibu/components/item_card.dart';
 
+import 'package:square_in_app_payments/models.dart';
+import 'package:square_in_app_payments/in_app_payments.dart';
+import 'package:Malibu/api/PaymentAPIServices.dart';
+
 class CartPage extends StatefulWidget {
+
   static const String RouteName = '/cart';
 
   const CartPage({Key? key}) : super(key: key);
@@ -24,6 +31,7 @@ class CartPage extends StatefulWidget {
 }
 
 class CartPageState extends State<CartPage> {
+
   List<CartItem> items = [];
   double sum = 0.0;
 
@@ -31,7 +39,98 @@ class CartPageState extends State<CartPage> {
   void initState() {
     super.initState();
     getCartItems();
+    _initSquarePayment();
   }
+
+  Future<void> _initSquarePayment() async {
+    // Initialized square_in_app_payment
+    await InAppPayments.setSquareApplicationId(squareApplicationId);
+
+    // set card entry theme for iOS
+    if(Platform.isIOS){
+      await  _setIOSCardEntryTheme();
+    }
+  }
+
+  // Method to set the theme for card entry
+  Future _setIOSCardEntryTheme() async {
+    var themeConfiguationBuilder = IOSThemeBuilder();
+    themeConfiguationBuilder.saveButtonTitle = 'Pay';
+    themeConfiguationBuilder.errorColor = RGBAColorBuilder()
+      ..r = 255
+      ..g = 0
+      ..b = 0;
+    themeConfiguationBuilder.tintColor = RGBAColorBuilder()
+      ..r = 36
+      ..g = 152
+      ..b = 141;
+    themeConfiguationBuilder.keyboardAppearance = KeyboardAppearance.light;
+    themeConfiguationBuilder.messageColor = RGBAColorBuilder()
+      ..r = 114
+      ..g = 114
+      ..b = 114;
+
+    await InAppPayments.setIOSCardEntryTheme(themeConfiguationBuilder.build());
+  }
+
+  // Method for start the card entry flow
+  Future _onStartCardEntryFlow() async {
+
+    if(sum <= 0){
+      return false;
+    }
+
+    await InAppPayments.startCardEntryFlow(
+        onCardNonceRequestSuccess: _onCardEntryCardNonceRequestSuccess,
+        onCardEntryCancel: () => {},
+        collectPostalCode: true);
+  }
+
+  void _onCardEntryCardNonceRequestSuccess(CardDetails result) async {
+  
+    try {
+      var res = await createPayment(sum, result.nonce);
+      if(res.statusCode == 200){
+        Helper.clearCart();
+        Navigator.pop(context);
+        showDialog(
+          context: context,
+          builder: (BuildContext dialogContext) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(20.0)),
+              child: OrderSuccessDialog(),
+            );
+          },
+        );
+      }
+
+      InAppPayments.completeCardEntry(
+          onCardEntryComplete: _onCardEntryComplete);
+    } catch (ex) {
+      print("exception error>>"+ ex.toString());
+      InAppPayments.showCardNonceProcessingError(ex.toString());
+    }
+  }
+
+  void _showUrlNotSetAndPrintCurlCommand(String nonce,
+      {String? verificationToken}) {
+    String title;
+    if (verificationToken != null) {
+      title = "Nonce and verification token generated but not charged";
+    } else {
+      title = "Nonce generated but not charged";
+    }
+
+    print(title +"error");   
+  }
+
+
+void _onCardEntryComplete() {
+      print("Card entry completed..!");
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -238,18 +337,19 @@ class CartPageState extends State<CartPage> {
                                     BorderRadius.all(Radius.circular(8)),
                               ))),
                           onPressed: () => {
+                            _onStartCardEntryFlow()
                                 // print()
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext dialogContext) {
-                                    return Dialog(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20.0)),
-                                      child: OrderSuccessDialog(),
-                                    );
-                                  },
-                                )
+                                // showDialog(
+                                //   context: context,
+                                //   builder: (BuildContext dialogContext) {
+                                //     return Dialog(
+                                //       shape: RoundedRectangleBorder(
+                                //           borderRadius:
+                                //               BorderRadius.circular(20.0)),
+                                //       child: OrderSuccessDialog(),
+                                //     );
+                                //   },
+                                // )
                               }))
                 ],
               ),
