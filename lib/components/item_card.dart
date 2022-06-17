@@ -15,6 +15,8 @@ class ItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if(this.object.itemData.imageIds.length ==0)
+      this.object.itemData.thumbnail = "None";
     return Container(
       child: DecoratedBox(
         decoration: BoxDecoration(
@@ -35,7 +37,7 @@ class ItemCard extends StatelessWidget {
                       image: DecorationImage(
                         fit: BoxFit.cover,
                         // image: AssetImage('assets/images/mg_latte.jpg'),
-                        image: CachedNetworkImageProvider(this.object.itemData.thumbnail),
+                        image: setImage(this.object.itemData.thumbnail),
                       ),
                       borderRadius: const BorderRadius.all(Radius.circular(16)),
                     ),
@@ -122,7 +124,7 @@ class ItemCard extends StatelessWidget {
   }
 
   setImage(String s) {
-    if(s != null) {
+    if(s != null && s!= "None") {
       return CachedNetworkImageProvider(s);
     } else{
       return  AssetImage("assets/images/mg_latte.jpg");

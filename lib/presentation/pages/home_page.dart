@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> {
     data.addAll(dataList);
 
     data.retainWhere((obj) {
-      return obj.type == "CATEGORY";
+      return obj.type == "CATEGORY" && obj.objects.length>0;
     });
     return Scaffold(
       backgroundColor: AppColors.home_bg,
@@ -48,7 +48,20 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
         title: Padding(
           padding: EdgeInsets.all(10),
-          child:   Image.asset('assets/images/ic_logo.png'),
+          child:    Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                height: 44,
+                width: 44,
+                child: Image.asset('assets/images/appicon_48.jpg'),
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Image.asset('assets/images/home_name.jpg'),
+            ],
+          )
         ),
         actions: [
           Padding(padding: EdgeInsets.all(10),

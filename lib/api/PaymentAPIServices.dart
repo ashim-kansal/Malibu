@@ -20,7 +20,7 @@ class PaymentAPIServices {
     http.post(Uri.parse(url),
         headers: {
           HttpHeaders.contentTypeHeader: 'application/json',
-          HttpHeaders.authorizationHeader : "bearer "+squareAccessToken_sandbox
+          HttpHeaders.authorizationHeader : "bearer "+squareAccessToken
         },
       body: jsonEncode({
          "amount_money": {

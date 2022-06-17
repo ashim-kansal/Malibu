@@ -183,12 +183,11 @@ class ProductDetailPageState extends State<ProductDetailPage> {
                                   Navigator.pushNamed(context, SelectOptionDialog.RouteName, arguments: arg);
                                 }else {
                                   Helper.addItemInCart(CartItem(count: this.count,
-                                    id: widget.data.product.id,
+                                    id: widget.data.product.itemData.variations[0].id,
                                     name: widget.data.product.itemData.name,
                                     thumbnail: widget.data.product.itemData.thumbnail,
                                     price: widget.data.product.itemData.variations[0].itemVariationData.priceMoney.amount,
                                   ));
-                                  Navigator.pop(context);
 
                                   showDialog(
                                     context: context,

@@ -20,7 +20,10 @@ class _CustomizedPageViewState extends State<CustomizedPageView> {
   @override
   void initState() {
     super.initState();
-    getProducts(widget.imageIds);
+    if(widget.imageIds.length==0)
+      images.add("None");
+    else
+     getProducts(widget.imageIds);
   }
   @override
   Widget build(BuildContext context) {
@@ -104,11 +107,18 @@ class ProductImagePagerItem extends StatelessWidget {
             color: AppColors.app_pink,
             image: DecorationImage(
                 fit: BoxFit.fill,
-                image: CachedNetworkImageProvider(this.imageUrl))),
+                image: setImage(this.imageUrl))),
         child: Container(),
       ),);
   }
 
+  setImage(String s) {
+    if(s != null && s!= "None") {
+      return CachedNetworkImageProvider(s);
+    } else{
+      return  AssetImage("assets/images/mg_latte.jpg");
+    }
+  }
 
 }
 

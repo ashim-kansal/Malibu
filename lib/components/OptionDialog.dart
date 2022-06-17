@@ -137,7 +137,7 @@ class _SelectOptionDialog extends State<SelectOptionDialog> {
                               name: widget.data.product.itemData.name,
                               thumbnail: widget.data.product.itemData.thumbnail,
                               price: element.itemVariationData.priceMoney.amount);
-                          Navigator.pop(context);
+                          // Navigator.pop(context);
                           showDialog(
                             context: context,
                             builder: (BuildContext dialogContext) {

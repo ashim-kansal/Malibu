@@ -97,7 +97,7 @@ class AddedToCartDialog extends StatelessWidget {
             height: 10,
           ),
           Text(
-            'Your item is added to the cart',
+            'Item has been added to your cart',
             style: TextStyle(
                 fontSize: 14,
                 color: AppColors.color_727272,

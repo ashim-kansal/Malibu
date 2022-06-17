@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:Malibu/api/Cartitem.dart';
+import 'package:Malibu/api/ProductAPIServices.dart';
 import 'package:Malibu/components/OrderSuccessDialog.dart';
 import 'package:Malibu/config.dart';
 import 'package:Malibu/services/Helper.dart';
@@ -34,6 +35,8 @@ class CartPageState extends State<CartPage> {
 
   List<CartItem> items = [];
   double sum = 0.0;
+
+  String orderId="";
 
   @override
   void initState() {
@@ -87,23 +90,29 @@ class CartPageState extends State<CartPage> {
   }
 
   void _onCardEntryCardNonceRequestSuccess(CardDetails result) async {
-  
+    print("success payment"+this.orderId);
     try {
       var res = await createPayment(sum, result.nonce);
       if(res.statusCode == 200){
         Helper.clearCart();
-        Navigator.pop(context);
-        showDialog(
-          context: context,
-          builder: (BuildContext dialogContext) {
-            return Dialog(
-              shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(20.0)),
-              child: OrderSuccessDialog(),
-            );
-          },
-        );
+        payOrder(res["id"], this.orderId).then((value) => {
+          if (value != null)
+            {
+              print("id::"+value),
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext dialogContext) {
+                      return Dialog(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0)),
+                        child: OrderSuccessDialog(),
+                      );
+                    },
+                  )
+                }
+        });
+        // Navigator.pop(context);
+
       }
 
       InAppPayments.completeCardEntry(
@@ -152,18 +161,6 @@ void _onCardEntryComplete() {
         backgroundColor: Colors.white,
         iconTheme: IconThemeData(
             size: 30.0, color: AppColors.color_3f3c3c, opacity: 10.0),
-        // actions: <Widget>[
-        //   Padding(
-        //       padding: EdgeInsets.only(right: 20.0),
-        //       child: GestureDetector(
-        //         onTap: () {},
-        //         child: Icon(
-        //           Icons.search,
-        //           size: 26.0,
-        //         ),
-        //       )
-        //   )
-        // ],
       ),
       body: Container(
         color: AppColors.home_bg,
@@ -337,19 +334,7 @@ void _onCardEntryComplete() {
                                     BorderRadius.all(Radius.circular(8)),
                               ))),
                           onPressed: () => {
-                            _onStartCardEntryFlow()
-                                // print()
-                                // showDialog(
-                                //   context: context,
-                                //   builder: (BuildContext dialogContext) {
-                                //     return Dialog(
-                                //       shape: RoundedRectangleBorder(
-                                //           borderRadius:
-                                //               BorderRadius.circular(20.0)),
-                                //       child: OrderSuccessDialog(),
-                                //     );
-                                //   },
-                                // )
+                            createMyOrder(items)
                               }))
                 ],
               ),
@@ -369,6 +354,21 @@ void _onCardEntryComplete() {
               })
             }
         });
+  }
+
+  void createMyOrder(List<CartItem> items) {
+    print("hhhhh"+this.orderId);
+    createOrder(items).then((value) => {
+      if (value != null)
+        {
+          print("id::"+value.id),
+        _onStartCardEntryFlow(),
+
+        setState(() {
+            this.orderId = value.id;
+          })
+        }
+    });
   }
 }
 
@@ -428,4 +428,7 @@ class _CartListState extends State<CartList> {
             }
         });
   }
+
+
+
 }
