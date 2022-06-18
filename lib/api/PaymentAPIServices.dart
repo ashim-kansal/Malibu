@@ -15,7 +15,7 @@ class PaymentAPIServices {
 
     // Map<String, dynamic> map = HashMap();
     // map.putIfAbsent("object_ids", () => {ids});
-    final String url = squareHost + "v2/payments";
+    final String url = squareHost+ "v2/payments";
     final response = await
     http.post(Uri.parse(url),
         headers: {
@@ -31,10 +31,11 @@ class PaymentAPIServices {
         "source_id": sourceId
       })
     );
-    print(response.body);
-    var responseBody = json.decode(response.body);
+   
+    dynamic responseBody = json.decode(response.body);
+    print(responseBody);
     if (response.statusCode == 200) {
-      return response;
+      return responseBody;
     } else {
       throw responseBody["errorMessage"];
     }

@@ -93,27 +93,28 @@ class CartPageState extends State<CartPage> {
     print("success payment"+this.orderId);
     try {
       var res = await createPayment(sum, result.nonce);
-      if(res.statusCode == 200){
-        Helper.clearCart();
-        payOrder(res["id"], this.orderId).then((value) => {
-          if (value != null)
-            {
-              print("id::"+value),
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext dialogContext) {
-                      return Dialog(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0)),
-                        child: OrderSuccessDialog(),
-                      );
-                    },
-                  )
-                }
-        });
-        // Navigator.pop(context);
+      print(res);
 
-      }
+      var paymentId = res["payment"]["id"];
+      print("paymentId: - "+ paymentId.toString());
+      Helper.clearCart();
+      payOrder(paymentId.toString(), this.orderId).then((value) => {
+        if (value != null)
+          {
+            print("id::"+value),
+                showDialog(
+                  context: context,
+                  builder: (BuildContext dialogContext) {
+                    return Dialog(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0)),
+                      child: OrderSuccessDialog(),
+                    );
+                  },
+                )
+              }
+      });
+      // Navigator.pop(context);
 
       InAppPayments.completeCardEntry(
           onCardEntryComplete: _onCardEntryComplete);
