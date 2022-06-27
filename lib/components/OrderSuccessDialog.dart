@@ -147,16 +147,17 @@ class CustomProductSelectedDialog extends StatelessWidget {
             SizedBox(
               height: 10,
             ),
-            Text(
+            Center(child: Text(
               'You have selected ' +
                   name +
                   " of price \$" +
                   (element.price/100).toString(),
+              textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 18,
                   color: Colors.black,
                   fontWeight: FontWeight.w800),
-            ),
+            ),),
             SizedBox(
               height: 10,
             ),

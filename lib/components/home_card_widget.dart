@@ -52,7 +52,7 @@ class _HomeCardWidgetState extends State<HomeCardWidget> {
         Stack(
           children: <Widget>[
             Container(
-              height: MediaQuery.of(context).size.height * 0.28,
+              height: MediaQuery.of(context).size.height * 0.22,
               child: DecoratedBox(
                 decoration: BoxDecoration(
                     borderRadius: const BorderRadius.only(
@@ -63,7 +63,7 @@ class _HomeCardWidgetState extends State<HomeCardWidget> {
               ),
             ),
             Container(
-              height: MediaQuery.of(context).size.height * 0.35,
+              height: MediaQuery.of(context).size.height * 0.30,
               child: Padding(
                 padding: EdgeInsets.fromLTRB(10,20,10,20),
                 child: Column(children: <Widget>[
