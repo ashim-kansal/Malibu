@@ -48,43 +48,62 @@ class _HomeCardWidgetState extends State<HomeCardWidget> {
 
   @override
   Widget build(BuildContext context) {
-      return Padding(
-        padding: EdgeInsets.fromLTRB(10,20,10,20),
-        child: Column(children: <Widget>[
-          Container(
-              height: 200,
-              child:  PageView.builder(
-                  itemCount: images.length,
-                  allowImplicitScrolling: true,
+      return
+        Stack(
+          children: <Widget>[
+            Container(
+              height: MediaQuery.of(context).size.height * 0.28,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(26),
+                        bottomRight: Radius.circular(26)),
+                    color: AppColors.app_black),
+                child: Container(),
+              ),
+            ),
+            Container(
+              height: MediaQuery.of(context).size.height * 0.35,
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(10,20,10,20),
+                child: Column(children: <Widget>[
+                  Container(
+                      height: 200,
+                      child:  PageView.builder(
+                          itemCount: images.length,
+                          allowImplicitScrolling: true,
 
-                  onPageChanged: (int page) {
-                    setState(() {
-                      currentPage = page;
-                    });
-                  },
-                  controller: _pageController,
-                  // itemCount: 3,
-                  itemBuilder: (context, index) {
-                    return ImagePagerItem(imageUrl: images[index]);
-                  })
-          ),
-          // Stack(
-          //   children: <Widget>[
-          // Container(
-          //   margin: EdgeInsets.all(15),
-          //   child: Row(
-          //     mainAxisSize: MainAxisSize.min,
-          //     mainAxisAlignment: MainAxisAlignment.center,
-          //     children: <Widget>[
-          //       for (int i = 0; i < images.length; i++)
-          //         (i == currentPage ? circleBar(true) : circleBar(false))
-          //     ],
-          //   ),
-          // ),
-          //   ],
-          // ),
-        ]),
-      );
+                          onPageChanged: (int page) {
+                            setState(() {
+                              currentPage = page;
+                            });
+                          },
+                          controller: _pageController,
+                          // itemCount: 3,
+                          itemBuilder: (context, index) {
+                            return ImagePagerItem(imageUrl: images[index]);
+                          })
+                  ),
+                  // Stack(
+                  //   children: <Widget>[
+                  // Container(
+                  //   margin: EdgeInsets.all(15),
+                  //   child: Row(
+                  //     mainAxisSize: MainAxisSize.min,
+                  //     mainAxisAlignment: MainAxisAlignment.center,
+                  //     children: <Widget>[
+                  //       for (int i = 0; i < images.length; i++)
+                  //         (i == currentPage ? circleBar(true) : circleBar(false))
+                  //     ],
+                  //   ),
+                  // ),
+                  //   ],
+                  // ),
+                ]),
+              ),
+            )
+          ],
+        );
   }
 
 }
