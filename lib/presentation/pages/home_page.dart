@@ -51,15 +51,8 @@ class _HomePageState extends State<HomePage> {
           child:    Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                height: 44,
-                width: 44,
-                child: Image.asset('assets/images/appicon_48.jpg'),
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              Image.asset('assets/images/home_name.jpg'),
+
+              Image.asset('assets/images/home_logo.jpg', height: 44,color:Colors.white,),
             ],
           )
         ),
