@@ -63,7 +63,7 @@ class _HomeCardWidgetState extends State<HomeCardWidget> {
               ),
             ),
             Container(
-              height: MediaQuery.of(context).size.height * 0.30,
+              height: MediaQuery.of(context).size.height * 0.40,
               child: Padding(
                 padding: EdgeInsets.fromLTRB(10,20,10,20),
                 child: Column(children: <Widget>[

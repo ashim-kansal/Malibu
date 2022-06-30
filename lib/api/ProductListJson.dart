@@ -138,7 +138,6 @@ class ItemData {
   ItemData.fromJson(dynamic json) {
     name = json['name'];
     description = json['description'] != null ? json['description'] :"" ;
-    _visibility = json['visibility'];
     categoryId = json['category_id'] != null ? json['category_id'] :"";
     if (json['variations'] != null) {
       variations = [];
@@ -153,18 +152,15 @@ class ItemData {
       });
     }
     _productType = json['product_type'];
-    _skipModifierScreen = json['skip_modifier_screen'];
     _ecomVisibility = json['ecom_visibility'];
     imageIds = json['image_ids'] != null ? json['image_ids'].cast<String>() : [];
   }
    String name = "";
    String thumbnail = "";
    String description = "";
-  late String _visibility;
   String categoryId = "";
   List<Variations> variations = [];
   late String _productType;
-  late bool _skipModifierScreen;
   late String _ecomVisibility;
   List<String> imageIds=[];
   List<ItemOptions> item_options=[];
@@ -173,7 +169,6 @@ class ItemData {
     final map = <String, dynamic>{};
     map['name'] = name;
     map['description'] = description;
-    map['visibility'] = _visibility;
     map['category_id'] = categoryId;
     if (variations != null) {
       map['variations'] = variations.map((v) => v.toJson()).toList();
@@ -182,7 +177,6 @@ class ItemData {
       map['item_options'] = item_options.map((v) => v.toJson()).toList();
     }
     map['product_type'] = _productType;
-    map['skip_modifier_screen'] = _skipModifierScreen;
     map['ecom_visibility'] = _ecomVisibility;
     map['image_ids'] = imageIds;
     return map;
