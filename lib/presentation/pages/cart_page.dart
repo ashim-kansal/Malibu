@@ -35,6 +35,7 @@ class CartPageState extends State<CartPage> {
 
   List<CartItem> items = [];
   double sum = 0.0;
+  bool inProgress = false;
 
   String orderId="";
 
@@ -274,7 +275,7 @@ void _onCardEntryComplete() {
                       )
                     : Container(
                         child: Center(
-                        child: CircularProgressIndicator(),
+                        child: inProgress?CircularProgressIndicator(): Text("No Item in the cart", style: TextStyle(fontSize: 16, color: Colors.black),),
                       ))),
             Align(
               alignment: Alignment.bottomCenter,
@@ -347,10 +348,14 @@ void _onCardEntryComplete() {
   }
 
   void getCartItems() {
+    setState(() {
+      this.inProgress = true;
+    });
     Helper.getItemsFromCart().then((value) => {
           if (value != null)
             {
               setState(() {
+                this.inProgress=false;
                 this.items = value;
               })
             }

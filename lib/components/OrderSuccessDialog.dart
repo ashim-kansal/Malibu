@@ -150,7 +150,7 @@ class CustomProductSelectedDialog extends StatelessWidget {
             Center(child: Text(
               'You have selected ' +
                   name +
-                  " of price \$" +
+                  " which costs \$" +
                   (element.price/100).toString(),
               textAlign: TextAlign.center,
               style: TextStyle(
