@@ -193,7 +193,7 @@ class _HomePageState extends State<HomePage> {
                                               object: data[index].objects[1]),
                                           onTap: () {
                                             var product =
-                                                data[index].objects[0];
+                                                data[index].objects[1];
                                             var arg;
                                             if (product.itemData.item_options
                                                 .isNotEmpty) {

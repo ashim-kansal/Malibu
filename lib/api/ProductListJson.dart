@@ -152,7 +152,6 @@ class ItemData {
       });
     }
     _productType = json['product_type'];
-    _ecomVisibility = json['ecom_visibility'];
     imageIds = json['image_ids'] != null ? json['image_ids'].cast<String>() : [];
   }
    String name = "";
@@ -161,7 +160,6 @@ class ItemData {
   String categoryId = "";
   List<Variations> variations = [];
   late String _productType;
-  late String _ecomVisibility;
   List<String> imageIds=[];
   List<ItemOptions> item_options=[];
 
@@ -177,7 +175,6 @@ class ItemData {
       map['item_options'] = item_options.map((v) => v.toJson()).toList();
     }
     map['product_type'] = _productType;
-    map['ecom_visibility'] = _ecomVisibility;
     map['image_ids'] = imageIds;
     return map;
   }

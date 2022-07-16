@@ -100,7 +100,7 @@ class ItemCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        '\$'+(object.itemData.variations[0].itemVariationData.priceMoney.amount/100).toString(),
+                        '\$'+(object.itemData.variations[0].itemVariationData.priceMoney.amount/100).toStringAsFixed(2),
                         style: TextStyle(
                             color: Colors.black,
                             fontSize: 14,
@@ -189,7 +189,7 @@ class ItemCartItemState extends State<ItemCartCard>{
                       style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.values[4]),
                     ),
                     Text(
-                      '\$'+((widget.item.price/100)*widget.item.count).toString(),
+                      '\$'+((widget.item.price/100)*widget.item.count).toStringAsFixed(2),
                       textAlign: TextAlign.start,
                       style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.values[5]),
                     ),

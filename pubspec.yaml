@@ -25,6 +25,7 @@ dependencies:
   fluttertoast: ^8.0.9
   square_in_app_payments: ^1.7.4
   uuid: ^3.0.6
+  badges: ^2.0.3
 
 
 dev_dependencies:

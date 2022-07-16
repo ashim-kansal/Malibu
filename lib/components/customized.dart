@@ -104,9 +104,9 @@ class ProductImagePagerItem extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(16)),
-            color: AppColors.app_pink,
+            color: Colors.white,
             image: DecorationImage(
-                fit: BoxFit.fill,
+                fit: BoxFit.contain,
                 image: setImage(this.imageUrl))),
         child: Container(),
       ),);

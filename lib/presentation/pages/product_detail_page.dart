@@ -3,6 +3,7 @@ import 'package:Malibu/api/Cartitem.dart';
 import 'package:Malibu/api/ProductListJson.dart';
 import 'package:Malibu/components/OptionDialog.dart';
 import 'package:Malibu/components/OrderSuccessDialog.dart';
+import 'package:Malibu/presentation/pages/cart_page.dart';
 import 'package:Malibu/services/Helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -68,7 +69,7 @@ class ProductDetailPageState extends State<ProductDetailPage> {
                                       ),
                                     ),
                                     subtitle: Text(
-                                      '\$'+(widget.data.product.itemData.variations[0].itemVariationData.priceMoney.amount/100).toString(),
+                                      '\$'+(widget.data.product.itemData.variations[0].itemVariationData.priceMoney.amount/100).toStringAsFixed(2),
                                       style: TextStyle(
                                           color: Colors.black,
                                           fontSize: 16,
@@ -229,7 +230,27 @@ class ProductDetailPageState extends State<ProductDetailPage> {
                   shape: CircleBorder(),
                 ),
               ),
-            )
+            ),
+            Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(0, 60, 0, 0),
+                child: RawMaterialButton(
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  padding: EdgeInsets.all(10),
+                  onPressed: () {
+                    Navigator.pushNamed(context, CartPage.RouteName);
+                  },
+                  fillColor: Colors.white,
+                  child: Icon(
+                    Icons.shopping_cart_outlined,
+                    size: 25.0,
+                    color: AppColors.app_blue,
+                  ),
+                  shape: CircleBorder(),
+                ),
+              ),
+            ),
           ],
         ));
   }

@@ -51,6 +51,22 @@ class _SelectOptionDialog extends State<SelectOptionDialog> {
         backgroundColor: Colors.white,
         iconTheme: IconThemeData(
             size: 30.0, color: AppColors.color_3f3c3c, opacity: 10.0),
+        actions: [
+          Padding(padding: EdgeInsets.all(10),
+            child: GestureDetector(
+              onTap: (){
+                Navigator.pushNamed(context, CartPage.RouteName);
+              },
+              child: Container(
+                width: 30,
+                child: Icon(
+                  Icons.shopping_cart_outlined,
+                  size: 24,
+                  color: AppColors.color_9fabc0,
+                ),
+              ),
+            ),),
+        ],
       ),
       body: Column(
         mainAxisSize: MainAxisSize.max,
