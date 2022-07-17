@@ -11,7 +11,7 @@ class PaymentAPIServices {
 
 }
 
-  Future createPayment(amount, sourceId) async {
+  Future createPayment(amount, sourceId, orderId) async {
 
     // Map<String, dynamic> map = HashMap();
     // map.putIfAbsent("object_ids", () => {ids});
@@ -28,7 +28,8 @@ class PaymentAPIServices {
           "currency": "USD"
         },
         "idempotency_key": uuid.v4(),
-        "source_id": sourceId
+        "source_id": sourceId,
+        "order_id": orderId
       })
     );
    
