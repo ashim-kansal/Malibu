@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'package:Malibu/api/ProductListJson.dart';
+import 'package:Malibu/components/MyBadge.dart';
+import 'package:Malibu/services/Helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Malibu/components/AppColors.dart';
@@ -24,10 +26,12 @@ class ExploreProductsPage extends StatefulWidget {
 }
 
 class ExploreProductsPageState extends State<ExploreProductsPage> {
+  int cartCount = 0;
 
   @override
   void initState() {
     super.initState();
+    getCartCount();
   }
   @override
   Widget build(BuildContext context) {
@@ -43,27 +47,28 @@ class ExploreProductsPageState extends State<ExploreProductsPage> {
             opacity: 10.0
         ),
         actions: <Widget>[
-          // Padding(
-          //     padding: EdgeInsets.only(right: 20.0),
-          //     child: GestureDetector(
-          //       onTap: () {},
-          //       child: Icon(
-          //         Icons.search,
-          //         size: 26.0,
-          //       ),
-          //     )
-          // ),
-          Padding(
-              padding: EdgeInsets.only(right: 20.0),
+          MyBadge(
+            top: 8,
+            right: 8,
+            value: this.cartCount.toString(),
+            child: Padding(
+              padding: EdgeInsets.all(10),
               child: GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context,CartPage.RouteName);
+                  Navigator.pushNamed(context, CartPage.RouteName).then((value) => getCartCount());
                 },
-                child: Icon(
+                child: Container(
+                  width: 30,
+                  child: Icon(
                     Icons.shopping_cart_outlined,
+                    size: 24,
+                    color: AppColors.color_9fabc0,
+                  ),
                 ),
-              )
-          ),
+              ),
+            ),
+          )
+
         ],
       ),
 
@@ -95,7 +100,7 @@ class ExploreProductsPageState extends State<ExploreProductsPage> {
                       }else{
                         arg = ProductDetailArguments(product, []);
                       }
-                      Navigator.pushNamed(context, ProductDetailPage.RouteName, arguments: arg);
+                      Navigator.pushNamed(context, ProductDetailPage.RouteName, arguments: arg).then((value) => getCartCount());
                     },
                   );
                 })),
@@ -103,6 +108,17 @@ class ExploreProductsPageState extends State<ExploreProductsPage> {
         ],
       ),
     );
+  }
+
+  void getCartCount() {
+    Helper.getItemCountFromCart().then((value) => {
+      if (value != null)
+        {
+          setState(() {
+            this.cartCount = value;
+          })
+        }
+    });
   }
 }
 

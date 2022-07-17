@@ -54,6 +54,16 @@ static Future<List<CartItem>> getItemsFromCart() async {
     return items;
   }
 
+  static Future<int> getItemCountFromCart() async {
+  List<CartItem> items = [];
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String? cartString = await sharedPreferences.getString(valueSharedPrefrences);
+    if(cartString != null && cartString!.isNotEmpty)
+      items = CartItem.decode(cartString!);
+
+    return items.length;
+  }
+
   static void clearCart() async{
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     sharedPreferences.clear();

@@ -1,6 +1,7 @@
 
 import 'package:Malibu/api/Cartitem.dart';
 import 'package:Malibu/api/ProductListJson.dart';
+import 'package:Malibu/components/MyBadge.dart';
 import 'package:Malibu/components/OptionDialog.dart';
 import 'package:Malibu/components/OrderSuccessDialog.dart';
 import 'package:Malibu/presentation/pages/cart_page.dart';
@@ -27,6 +28,13 @@ class ProductDetailPage extends StatefulWidget {
 
 class ProductDetailPageState extends State<ProductDetailPage> {
   int count = 1;
+  int cartCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    getCartCount();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -181,7 +189,7 @@ class ProductDetailPageState extends State<ProductDetailPage> {
                                   var arg = SelectOptionDialogArguments(widget.data.product, widget.data.options, count);
                                   // Navigator.pop(context);
                                   // Navigator.pop(context);
-                                  Navigator.pushNamed(context, SelectOptionDialog.RouteName, arguments: arg);
+                                  Navigator.pushNamed(context, SelectOptionDialog.RouteName, arguments: arg).then((value) => getCartCount());
                                 }else {
                                   Helper.addItemInCart(CartItem(count: this.count,
                                     id: widget.data.product.itemData.variations[0].id,
@@ -189,6 +197,7 @@ class ProductDetailPageState extends State<ProductDetailPage> {
                                     thumbnail: widget.data.product.itemData.thumbnail,
                                     price: widget.data.product.itemData.variations[0].itemVariationData.priceMoney.amount,
                                   ));
+                                  getCartCount();
 
                                   showDialog(
                                     context: context,
@@ -239,14 +248,18 @@ class ProductDetailPageState extends State<ProductDetailPage> {
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   padding: EdgeInsets.all(10),
                   onPressed: () {
-                    Navigator.pushNamed(context, CartPage.RouteName);
+                    Navigator.pushNamed(context, CartPage.RouteName).then((value) => getCartCount());
                   },
                   fillColor: Colors.white,
-                  child: Icon(
+                  child:  MyBadge(
+                      top: 1,
+                      right: 1,
+                      value: this.cartCount.toString(),
+                      child:Icon(
                     Icons.shopping_cart_outlined,
                     size: 25.0,
                     color: AppColors.app_blue,
-                  ),
+                  )),
                   shape: CircleBorder(),
                 ),
               ),
@@ -254,6 +267,19 @@ class ProductDetailPageState extends State<ProductDetailPage> {
           ],
         ));
   }
+
+  void getCartCount() {
+    Helper.getItemCountFromCart().then((value) => {
+      if (value != null)
+        {
+          print(value),
+          setState(() {
+            this.cartCount = value;
+          })
+        }
+    });
+  }
+
 }
 
 class TextDetailWidget1 extends StatelessWidget {

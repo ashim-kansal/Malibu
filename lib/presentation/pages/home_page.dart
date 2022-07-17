@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:Malibu/api/ProductAPIServices.dart';
 import 'package:Malibu/api/ProductListJson.dart';
+import 'package:Malibu/components/MyBadge.dart';
+import 'package:Malibu/services/Helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Malibu/components/AppColors.dart';
@@ -21,24 +23,26 @@ class HomePage extends StatefulWidget {
   State<StatefulWidget> createState() {
     return _HomePageState();
   }
+
 }
 
 class _HomePageState extends State<HomePage> {
   List<Objects> dataList = [];
+  int cartCount = 0;
 
   @override
   void initState() {
     super.initState();
     getProducts();
+    getCartCount();
   }
 
   @override
   Widget build(BuildContext context) {
     List<Objects> data = [];
     data.addAll(dataList);
-
     data.retainWhere((obj) {
-      return obj.type == "CATEGORY" && obj.objects.length>0;
+      return obj.type == "CATEGORY" && obj.objects.length > 0;
     });
     return Scaffold(
       backgroundColor: AppColors.home_bg,
@@ -47,33 +51,41 @@ class _HomePageState extends State<HomePage> {
         elevation: 0,
         centerTitle: true,
         title: Padding(
-          padding: EdgeInsets.all(10),
-          child:    Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-
-              Image.asset('assets/images/home_logo.jpg', height: 44,color:Colors.white,),
-            ],
-          )
-        ),
+            padding: EdgeInsets.all(10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/home_logo.jpg',
+                  height: 44,
+                  color: Colors.white,
+                ),
+              ],
+            )),
         actions: [
-          Padding(padding: EdgeInsets.all(10),
-          child: GestureDetector(
-            onTap: (){
-              Navigator.pushNamed(context, CartPage.RouteName);
-            },
-            child: Container(
-              width: 30,
-              child: Icon(
-                Icons.shopping_cart_outlined,
-                size: 24,
-                color: AppColors.color_9fabc0,
+          MyBadge(
+            top: 8,
+            right: 8,
+            value: this.cartCount.toString(),
+            child: Padding(
+              padding: EdgeInsets.all(10),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, CartPage.RouteName).then((value) => getCartCount());
+                },
+                child: Container(
+                  width: 30,
+                  child: Icon(
+                    Icons.shopping_cart_outlined,
+                    size: 24,
+                    color: AppColors.color_9fabc0,
+                  ),
+                ),
               ),
             ),
-          ),),
+          )
         ],
       ),
-
       body: Column(
         mainAxisSize: MainAxisSize.max,
         children: [
@@ -114,7 +126,7 @@ class _HomePageState extends State<HomePage> {
                                       data[index], options);
                                   Navigator.pushNamed(
                                       context, ExploreProductsPage.RouteName,
-                                      arguments: args);
+                                      arguments: args).then((value) => getCartCount());
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
@@ -177,7 +189,7 @@ class _HomePageState extends State<HomePage> {
                                             }
                                             Navigator.pushNamed(context,
                                                 ProductDetailPage.RouteName,
-                                                arguments: arg);
+                                                arguments: arg).then((value) => getCartCount());
                                           },
                                         )
                                       : Container()),
@@ -218,7 +230,7 @@ class _HomePageState extends State<HomePage> {
                                             }
                                             Navigator.pushNamed(context,
                                                 ProductDetailPage.RouteName,
-                                                arguments: arg);
+                                                arguments: arg).then((value) => getCartCount());
                                           },
                                         )
                                       : Container()),
@@ -351,5 +363,15 @@ class _HomePageState extends State<HomePage> {
               })
             }
         });
+  }
+  void getCartCount() {
+    Helper.getItemCountFromCart().then((value) => {
+      if (value != null)
+        {
+          setState(() {
+            this.cartCount = value;
+          })
+        }
+    });
   }
 }

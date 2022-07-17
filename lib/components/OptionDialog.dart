@@ -4,8 +4,10 @@ import 'package:Malibu/api/ItemOptionValues.dart';
 import 'package:Malibu/api/ProductListJson.dart';
 import 'package:Malibu/api/itemOptionData.dart';
 import 'package:Malibu/components/AppColors.dart';
+import 'package:Malibu/components/MyBadge.dart';
 import 'package:Malibu/components/OrderSuccessDialog.dart';
 import 'package:Malibu/presentation/pages/cart_page.dart';
+import 'package:Malibu/services/Helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -29,10 +31,12 @@ class SelectOptionDialog extends StatefulWidget {
 class _SelectOptionDialog extends State<SelectOptionDialog> {
 
   List<String> selectedIds = [];
+  int cartCount = 0;
 
   @override
   void initState() {
     super.initState();
+    getCartCount();
     widget.data.options.forEach((element) {
       selectedIds.add(element.itemOptionData.values[0].id);
     });
@@ -52,20 +56,27 @@ class _SelectOptionDialog extends State<SelectOptionDialog> {
         iconTheme: IconThemeData(
             size: 30.0, color: AppColors.color_3f3c3c, opacity: 10.0),
         actions: [
-          Padding(padding: EdgeInsets.all(10),
-            child: GestureDetector(
-              onTap: (){
-                Navigator.pushNamed(context, CartPage.RouteName);
-              },
-              child: Container(
-                width: 30,
-                child: Icon(
-                  Icons.shopping_cart_outlined,
-                  size: 24,
-                  color: AppColors.color_9fabc0,
+          MyBadge(
+            top: 8,
+            right: 8,
+            value: this.cartCount.toString(),
+            child: Padding(
+              padding: EdgeInsets.all(10),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, CartPage.RouteName).then((value) => getCartCount());
+                },
+                child: Container(
+                  width: 30,
+                  child: Icon(
+                    Icons.shopping_cart_outlined,
+                    size: 24,
+                    color: AppColors.color_9fabc0,
+                  ),
                 ),
               ),
-            ),),
+            ),
+          ),
         ],
       ),
       body: Column(
@@ -142,6 +153,7 @@ class _SelectOptionDialog extends State<SelectOptionDialog> {
                   onPressed: () {
                     this.selectedIds.removeWhere((element) => element=="");
                     print(""+this.selectedIds.toString());
+
                     widget.data.product.itemData.variations.forEach((element) {
                         if(compareArrays(element.itemVariationData.itemOptionValues, this.selectedIds)){
                           print("variation name: "+element.itemVariationData.name);
@@ -166,6 +178,7 @@ class _SelectOptionDialog extends State<SelectOptionDialog> {
                           );
                         }
                       });
+
                     // Navigator.pushNamed(context, CartPage.RouteName);
                   }),
             ),
@@ -173,6 +186,17 @@ class _SelectOptionDialog extends State<SelectOptionDialog> {
         ],
       ),
     );
+  }
+
+  void getCartCount() {
+    Helper.getItemCountFromCart().then((value) => {
+      if (value != null)
+        {
+          setState(() {
+            this.cartCount = value;
+          })
+        }
+    });
   }
 
   bool compareArrays(List<ItemOptionValues> array1, List<String> array2) {
