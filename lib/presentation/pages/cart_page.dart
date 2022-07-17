@@ -20,7 +20,6 @@ import 'package:square_in_app_payments/in_app_payments.dart';
 import 'package:Malibu/api/PaymentAPIServices.dart';
 
 class CartPage extends StatefulWidget {
-
   static const String RouteName = '/cart';
 
   const CartPage({Key? key}) : super(key: key);
@@ -32,12 +31,11 @@ class CartPage extends StatefulWidget {
 }
 
 class CartPageState extends State<CartPage> {
-
   List<CartItem> items = [];
   double sum = 0.0;
   bool inProgress = false;
 
-  String orderId="";
+  String orderId = "";
 
   @override
   void initState() {
@@ -51,8 +49,8 @@ class CartPageState extends State<CartPage> {
     await InAppPayments.setSquareApplicationId(squareApplicationId);
 
     // set card entry theme for iOS
-    if(Platform.isIOS){
-      await  _setIOSCardEntryTheme();
+    if (Platform.isIOS) {
+      await _setIOSCardEntryTheme();
     }
   }
 
@@ -79,8 +77,7 @@ class CartPageState extends State<CartPage> {
 
   // Method for start the card entry flow
   Future _onStartCardEntryFlow() async {
-
-    if(sum <= 0){
+    if (sum <= 0) {
       return false;
     }
 
@@ -91,36 +88,47 @@ class CartPageState extends State<CartPage> {
   }
 
   void _onCardEntryCardNonceRequestSuccess(CardDetails result) async {
-    print("success payment"+this.orderId);
+    print("order id from card entry success " + this.orderId);
     try {
-      var res = await createPayment(sum, result.nonce);
+      var res = await createPayment(sum, result.nonce, this.orderId);
       print(res);
-
-      var paymentId = res["payment"]["id"];
-      print("paymentId: - "+ paymentId.toString());
+      // var paymentId = res["payment"]["id"];
+      // print("paymentId: - " + paymentId.toString());
       Helper.clearCart();
-      payOrder(paymentId.toString(), this.orderId).then((value) => {
-        if (value != null)
-          {
-            print("id::"+value),
-                showDialog(
-                  context: context,
-                  builder: (BuildContext dialogContext) {
-                    return Dialog(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0)),
-                      child: OrderSuccessDialog(),
-                    );
-                  },
-                )
-              }
-      });
+
+      showDialog(
+        context: context,
+        builder: (BuildContext dialogContext) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0)),
+            child: OrderSuccessDialog(),
+          );
+        },
+      );
+
+      // payOrder(paymentId.toString(), this.orderId).then((value) => {
+      //   if (value != null)
+      //     {
+      //       print("id::"+value),
+      //           showDialog(
+      //             context: context,
+      //             builder: (BuildContext dialogContext) {
+      //               return Dialog(
+      //                 shape: RoundedRectangleBorder(
+      //                     borderRadius: BorderRadius.circular(20.0)),
+      //                 child: OrderSuccessDialog(),
+      //               );
+      //             },
+      //           )
+      //         }
+      // });
       // Navigator.pop(context);
 
       InAppPayments.completeCardEntry(
           onCardEntryComplete: _onCardEntryComplete);
     } catch (ex) {
-      print("exception error>>"+ ex.toString());
+      print("exception error>>" + ex.toString());
       InAppPayments.showCardNonceProcessingError(ex.toString());
     }
   }
@@ -134,22 +142,20 @@ class CartPageState extends State<CartPage> {
       title = "Nonce generated but not charged";
     }
 
-    print(title +"error");   
+    print(title + "error");
   }
 
-
-void _onCardEntryComplete() {
-      print("Card entry completed..!");
+  void _onCardEntryComplete() {
+    print("Card entry completed..!");
   }
-
 
   @override
   Widget build(BuildContext context) {
-    if(items.length > 0) {
+    if (items.length > 0) {
       sum = 0;
-      items.forEach((element) =>
-      sum = sum + (element.count * (element.price / 100))
-      );
+      items.forEach(
+          (element) => sum = sum + (element.count * (element.price)));
+          // (element) => sum = sum + (element.count * (element.price / 100)));
     }
 
     return Scaffold(
@@ -211,7 +217,6 @@ void _onCardEntryComplete() {
                                 color: Colors.black,
                                 height: 15,
                               )),
-
                           Container(
                             height: 24,
                             width: 16,
@@ -247,21 +252,22 @@ void _onCardEntryComplete() {
                             item: items[index],
                             onAddClick: () {
                               setState(() {
-                                items[index].count = items[index].count+1;
+                                items[index].count = items[index].count + 1;
                               });
                               Helper.updateItemCountInCart(items);
                             },
                             onMinusClick: () {
-                              if(items[index].count==1){
+                              if (items[index].count == 1) {
                                 setState(() {
                                   items.removeAt(index);
                                 });
                                 Helper.updateItemCountInCart(items);
-                              }else {
+                              } else {
                                 setState(() {
                                   items[index].count = items[index].count - 1;
                                 });
-                                Helper.updateItemCountInCart(items);                              }
+                                Helper.updateItemCountInCart(items);
+                              }
                             },
                           );
                         },
@@ -275,7 +281,13 @@ void _onCardEntryComplete() {
                       )
                     : Container(
                         child: Center(
-                        child: inProgress?CircularProgressIndicator(): Text("No Item in the cart", style: TextStyle(fontSize: 16, color: Colors.black),),
+                        child: inProgress
+                            ? CircularProgressIndicator()
+                            : Text(
+                                "No Item in the cart",
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.black),
+                              ),
                       ))),
             Align(
               alignment: Alignment.bottomCenter,
@@ -283,8 +295,7 @@ void _onCardEntryComplete() {
                 mainAxisAlignment: MainAxisAlignment.end,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-
-                  CartInvoiceText("Subtotal", sum.toString()),
+                  CartInvoiceText("Subtotal", (sum / 100).toStringAsFixed(2)),
                   SizedBox(
                     height: 5,
                   ),
@@ -294,7 +305,7 @@ void _onCardEntryComplete() {
                   // CartInvoiceText(),
                   // SizedBox(height: 5,),
                   // CustomPaint(painter: DashedLinePainter(), size: Size(MediaQuery.of(context).size.width-32,5)),
-                  CartInvoiceText("Total", sum.toString()),
+                  CartInvoiceText("Total", (sum / 100).toStringAsFixed(2)),
                   Padding(
                     padding: EdgeInsets.fromLTRB(16, 10, 16, 0),
                     child: Stack(
@@ -335,9 +346,7 @@ void _onCardEntryComplete() {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8)),
                               ))),
-                          onPressed: () => {
-                            createMyOrder(items)
-                              }))
+                          onPressed: () => {createMyOrder(items)}))
                 ],
               ),
             )
@@ -355,7 +364,7 @@ void _onCardEntryComplete() {
           if (value != null)
             {
               setState(() {
-                this.inProgress=false;
+                this.inProgress = false;
                 this.items = value;
               })
             }
@@ -363,18 +372,17 @@ void _onCardEntryComplete() {
   }
 
   void createMyOrder(List<CartItem> items) {
-    print("hhhhh"+this.orderId);
+    print("orderId " + this.orderId);
     createOrder(items).then((value) => {
-      if (value != null)
-        {
-          print("id::"+value.id),
-        _onStartCardEntryFlow(),
-
-        setState(() {
-            this.orderId = value.id;
-          })
-        }
-    });
+          if (value != null)
+            {
+              print("id::" + value.id),
+              setState(() {
+                this.orderId = value.id;
+              })
+            },
+          _onStartCardEntryFlow(),
+        });
   }
 }
 
@@ -434,7 +442,4 @@ class _CartListState extends State<CartList> {
             }
         });
   }
-
-
-
 }

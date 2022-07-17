@@ -117,7 +117,7 @@ Future<Order> createOrder(List<CartItem> items) async {
       },
     body: jsonEncode(request.toJson())
   );
-  print(response.body);
+  print("response from create order "+response.body);
   dynamic res = json.decode(response.body);
   Order result =  Order.fromJson(res["order"]);
 
@@ -126,21 +126,29 @@ Future<Order> createOrder(List<CartItem> items) async {
 }
 
 Future<String> payOrder(String paymentId, String orderId) async {
+  print("OrderId from payOrder "+ orderId);
 
-  final String url = "https://connect.squareup.com/v2/v2/orders/"+orderId+"/pay";
+  final String url = "https://connect.squareup.com/v2/orders/"+orderId+"/pay";
+
+  final String _uuid = uuid.v4();
+
+  print("body params "+jsonEncode({
+      "payment_ids": [paymentId],
+      "idempotency_key": _uuid
+    }));
   final response = await
   http.post(Uri.parse(url),
       headers: {
         HttpHeaders.contentTypeHeader: 'application/json',
         "Square-Version":"2022-05-12",
-        HttpHeaders.authorizationHeader : "bearer EAAAFAX6i031xWR-DFq476cY1EHa5u2mspiZwLwvcVyy-HQoVbaelcSkj-V0L-OD"
+        HttpHeaders.authorizationHeader : "Bearer EAAAFAX6i031xWR-DFq476cY1EHa5u2mspiZwLwvcVyy-HQoVbaelcSkj-V0L-OD"
       },
     body: jsonEncode({
       "payment_ids": [paymentId],
-      "idempotency_key":uuid.v4()
+      "idempotency_key": _uuid
     })
   );
-  print(response.body);
+  print("final response from the pay order "+ response.body);
   dynamic res = json.decode(response.body);
   String id =  res["payment"]["id"];
 
