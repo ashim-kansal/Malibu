@@ -92,7 +92,9 @@ class _HomePageState extends State<HomePage> {
           Expanded(
               child: ListView(
             children: [
-              HomeCardWidget(),
+              Container(
+                child: HomeCardWidget(),
+              ),
               Padding(
                 padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
                 child: ListView(
